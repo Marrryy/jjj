@@ -22,7 +22,7 @@ if($row === false){
 
 if(isset($_POST['delete'])&& isset($_POST['profile_id'])){
     $stmt = $pdo->prepare("DELETE FROM profile WHERE profile_id=:aid");
-    $stmt->execute(array(':aid'=> $_POST['auto_id']));
+    $stmt->execute(array(':aid'=> $_POST['profile_id']));
     $_SESSION['success']="Record deleted";
     header('Location: index.php');
     return;

@@ -1,8 +1,11 @@
 <?php
 include_once "pdo.php";
 session_start();
-if(!isset($_SESSION['name'])){
-  die("Not logged in");
+
+if(!isset($_GET['profile_id'])){
+ $_SESSION['error'] = "Missing profile_id";
+ header("Location: index.php");
+ return;
 }
 ?>
 
@@ -16,28 +19,23 @@ if(!isset($_SESSION['name'])){
 </head>
 <body>
 <div class="container">
-<h1>Tracking Autos for "
-<?php 
-echo htmlentities($_SESSION['name']);
-?>
-"</h1>
+<h1>Profile information</h1>
 <?php
-if(isset($_SESSION['success'])){
-    echo '<p style="color: green;">'.$_SESSION['success'].'</p>';
-    unset($_SESSION['success']);
+$stmt = $pdo->prepare("SELECT * FROM profile WHERE profile_id=:aid");
+$stmt->execute(array(':aid'=> $_GET['profile_id']));
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+if($row === false){
+    $_SESSION['error']="Could not load profile";
+    header('Location: index.php');
+    return;
 }
+echo "First Name: ".htmlentities($row['first_name']);
+echo "<br><br>Last Name: ".htmlentities($row['last_name']);
+echo "<br><br>Email: ".htmlentities($row['email']);
+echo "<br><br>Headline: ".htmlentities($row['headline']);
+echo "<br><br>Summary: ".htmlentities($row['summary']);
 ?>
-<h2>Automobiles</h2>
-<ul>
-<?php
-$stmt = $pdo->query("SELECT * FROM autos");
-while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-  echo "<li>".$row['year']." ".$row['make']." / ".$row['mileage']."</li>";
-}
-
-?>
-</ul>
-<a href="./add.php">Add New</a> | 
-<a href="./logout.php">Logout</a> 
+<br>
+<a href="./index.php">Done</a>
 </body>
 </html>

@@ -3,15 +3,11 @@ include_once "pdo.php";
 session_start();
 
 if(isset($_POST['who']) && isset($_POST['pass'])){
-//   $_SESSION['error'] = "Email and password are required";
-//   header("Location: login.php");
-//   return;
-// }else {
   if ( strlen($_POST['who']) < 1 || strlen($_POST['pass']) < 1) {
     $_SESSION['error'] = 'Email and password are required';
     header("Location: login.php");
     return;
-}
+  }
   if(!strpos($_POST['who'], '@')){
     $_SESSION['error'] = "Email must have an at-sign (@)";
     header("Location: login.php");
@@ -19,7 +15,7 @@ if(isset($_POST['who']) && isset($_POST['pass'])){
     error_log("Login fail ".$_POST['who']." $check");
   }
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username=:user");
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:user");
     $stmt->execute(array(':user'=> $_POST['who']));
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     if(count($row)< 1){
@@ -27,14 +23,11 @@ if(isset($_POST['who']) && isset($_POST['pass'])){
       header("Location: login.php");
       return;
     }
-      // print_r ($row);
-      if($row['password']==$_POST['pass']){
-        // echo "you are right";
+
+    if($row['password']==$_POST['pass']){
         $_SESSION['name'] = $_POST['who'];
-        // header("Location: autos.php?name=".urlencode($_POST['who']));
-        // header("Location: view.php");
+        $_SESSION['user_id'] = $row["user_id"];
         header("Location: index.php");
-        echo $_SESSION['name'];
         error_log("Login success ".$_POST['who']);
       }else{
         $_SESSION['error'] = "Incorrect password";
@@ -71,7 +64,6 @@ if ( isset($_SESSION['error']) ) {
 <label for="id_1723">Password</label>
 <input type="password" name="pass" id="id_1723"><br/>
 <input type="submit" value="Log In">
-<!-- <input type="submit" name="cancel" value="Cancel"> -->
 <a href ="index.php">Cancel</a>
 </form>
 </body>

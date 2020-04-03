@@ -8,7 +8,7 @@ if(!isset($_SESSION['name'])){
 if(isset($_POST['first_name']) && isset($_POST['last_name']) 
 && isset($_POST['email']) && isset($_POST['headline'])){
 
-  if ( strlen($_POST['first_name']) < 1 || ($_POST['last_name']) < 1 || ($_POST['email']) < 1) {
+  if ( strlen($_POST['first_name']) < 1 || strlen($_POST['last_name']) < 1 || strlen($_POST['email']) < 1) {
     $_SESSION['error'] = 'All fields are required';
     header("Location: add.php");
     return;
@@ -25,6 +25,9 @@ if(isset($_POST['first_name']) && isset($_POST['last_name'])
     ':he' => $_POST['headline'],
     ':su' => $_POST['summary'])
     ); 
+    $_SESSION["success"]="Record Added";
+    header("Location: index.php");
+    return;
 }
 ?>
 

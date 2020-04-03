@@ -29,8 +29,7 @@ CREATE TABLE Profile (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
   
 
-  
 INSERT INTO `users`
-(`name`, `username`, `password`)
+(`name`, `email`, `password`)
 VALUES
-("coba","cb@a.c","php123")
+("umsi","umsi@umich.edu","php123")

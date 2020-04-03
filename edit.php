@@ -25,13 +25,13 @@ if($row === false){
 if(isset($_POST['first_name']) && isset($_POST['last_name']) 
 && isset($_POST['email']) && isset($_POST['headline'])){
 
-  if ( strlen($_POST['first_name']) < 1 || ($_POST['last_name']) < 1 || ($_POST['email']) < 1) {
+  if ( strlen($_POST['first_name']) < 1 || strlen($_POST['last_name']) < 1 || strlen($_POST['email']) < 1) {
     $_SESSION['error'] = 'All fields are required';
     header("Location: edit.php?".$_GET['profile_id']);
     return;
   }
       $stmt = $pdo->prepare('UPDATE profile SET first_name=:fn,
-      last_name=:ln, email=:em, headline=:he, summary=":su
+      last_name=:ln, email=:em, headline=:he, summary=:su
       WHERE profile_id = :id');
       $stmt->execute(array(
         ':id' => $_GET['profile_id'],
@@ -39,14 +39,13 @@ if(isset($_POST['first_name']) && isset($_POST['last_name'])
         ':ln' => $_POST['last_name'],
         ':em' => $_POST['email'],
         ':he' => $_POST['headline'],
-        ':su' => $_POST['summary']));
+        ':su' => $_POST['summary'])
+      );
+      print_r($stmt);
       $_SESSION['success'] = "Record inserted";
-
       header("Location:index.php");
       return;
-
   } 
-}
 
 $first = htmlentities($row['first_name']);
 $last = htmlentities($row['last_name']);
@@ -88,11 +87,11 @@ if ( isset($_SESSION['error']) ) {
 <p>Email:
 <input type="text" name="email" size="30" value=<?=$emai?>/></p>
 <p>Headline:<br/>
-<input type="text" name="headline" size="80" value=<?=$headl?>/></p>
+<input type="text" name="headline" size="80" value=<?php echo $headl;?>/></p>
 <p>Summary:<br/>
-<textarea name="summary" rows="8" cols="80" value=<?=$summa?>></textarea>
+<textarea name="summary" rows="8" cols="80" ><?=$summa?></textarea>
 <p>
-<input type="submit" value="Add">
+<input type="submit" value="edit">
 <input type="submit" name="cancel" value="cancel">
 </form>
 
