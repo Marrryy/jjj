@@ -34,6 +34,23 @@ echo "<br><br>Last Name: ".htmlentities($row['last_name']);
 echo "<br><br>Email: ".htmlentities($row['email']);
 echo "<br><br>Headline: ".htmlentities($row['headline']);
 echo "<br><br>Summary: ".htmlentities($row['summary']);
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM position WHERE profile_id=:aid");
+$stmt->execute(array(':aid'=> $_GET['profile_id']));
+$count = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if($count["COUNT(*)"] >0){
+  echo "<p>Position";
+  echo "<ul>";
+  $stmt = $pdo->prepare("SELECT * FROM position WHERE profile_id=:aid");
+  $stmt->execute(array(':aid'=> $_GET['profile_id']));
+  while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+    echo '<li> '.htmlentities($row["year"]).' : '.htmlentities($row["description"]).'</li>';
+  }
+  echo "</ul>";
+  echo "</p>";
+}
+
 ?>
 <br>
 <a href="./index.php">Done</a>
