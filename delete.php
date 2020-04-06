@@ -1,5 +1,7 @@
 <?php
 include_once "pdo.php";
+include_once "function.php";
+
 session_start();
 if(!isset($_SESSION['name'])){
     die("ACCESS DENIED");
@@ -11,9 +13,7 @@ if(!isset($_GET['profile_id'])){
     return;
 }
 
-$stmt = $pdo->prepare("SELECT * FROM profile WHERE profile_id=:aid");
-$stmt->execute(array(':aid'=> $_GET['profile_id']));
-$row = $stmt->fetch(PDO::FETCH_ASSOC);
+$row = getProfile($pdo);
 if($row === false){
     $_SESSION['error']="Bad value for id";
     header('Location: index.php');
@@ -21,8 +21,7 @@ if($row === false){
 }
 
 if(isset($_POST['delete'])&& isset($_POST['profile_id'])){
-    $stmt = $pdo->prepare("DELETE FROM profile WHERE profile_id=:aid");
-    $stmt->execute(array(':aid'=> $_POST['profile_id']));
+    deleteProfile($pdo);
     $_SESSION['success']="Record deleted";
     header('Location: index.php');
     return;

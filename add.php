@@ -42,9 +42,9 @@ if(isset($_POST['first_name']) && isset($_POST['last_name'])
 
     }
 
-    // $_SESSION["success"]="Record Added";
-    // header("Location: index.php");
-    // return;
+    $_SESSION["success"]="Record Added";
+    header("Location: index.php");
+    return;
   }
 }
 
@@ -87,12 +87,12 @@ flashMessage();
 <input type="text" name="headline" size="80"/></p>
 <p>Summary:<br/>
 <textarea name="summary" rows="8" cols="80"></textarea>
-<p>
+</p>
 <p>Position:<br/>
-<input type="button" id="addPos" value="+">
-<div id="position_fields">
-</div>
-<p>
+  <input type="button" id="addPos" value="+">
+  <div id="position_fields">
+  </div>
+</p>
 
 <input type="submit" value="Add">
 <input type="submit" name="cancel" value="cancel">

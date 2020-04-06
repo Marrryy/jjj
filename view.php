@@ -1,5 +1,7 @@
 <?php
 include_once "pdo.php";
+include_once "function.php";
+
 session_start();
 
 if(!isset($_GET['profile_id'])){
@@ -20,15 +22,15 @@ if(!isset($_GET['profile_id'])){
 <body>
 <div class="container">
 <h1>Profile information</h1>
+
 <?php
-$stmt = $pdo->prepare("SELECT * FROM profile WHERE profile_id=:aid");
-$stmt->execute(array(':aid'=> $_GET['profile_id']));
-$row = $stmt->fetch(PDO::FETCH_ASSOC);
+$row = getProfile($pdo);
 if($row === false){
     $_SESSION['error']="Could not load profile";
     header('Location: index.php');
     return;
 }
+
 echo "First Name: ".htmlentities($row['first_name']);
 echo "<br><br>Last Name: ".htmlentities($row['last_name']);
 echo "<br><br>Email: ".htmlentities($row['email']);

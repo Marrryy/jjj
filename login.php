@@ -1,5 +1,7 @@
 <?php
 include_once "pdo.php";
+include_once "function.php";
+
 session_start();
 
 if(isset($_POST['who']) && isset($_POST['pass'])){
@@ -8,33 +10,35 @@ if(isset($_POST['who']) && isset($_POST['pass'])){
   //   header("Location: login.php");
   //   return;
   // }
-  if(!strpos($_POST['who'], '@')){
-    $_SESSION['error'] = "Email must have an at-sign (@)";
+ 
+  $check = validateUser();
+  if($check){
+    $_SESSION['error'] = $check;
     header("Location: login.php");
-    return;
     error_log("Login fail ".$_POST['who']." $check");
+    return;  
   }
+
     $salt ='XyZzy12*_';
-    $check = hash('md5', $salt.$_POST['pass']);
+    $hashing = hash('md5', $salt.$_POST['pass']);
+
     $stmt = $pdo->prepare("SELECT * FROM users WHERE email=:user AND password=:pass");
-    $stmt->execute(array(':user'=> $_POST['who'], ':pass'=>$check ));
+    $stmt->execute(array(':user'=> $_POST['who'], ':pass'=>$hashing ));
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    if(count($row)< 1){
-      $_SESSION['error'] = "Not a member";
+
+    $check = validateUser2($row);
+    if($check) {
+      $_SESSION['error'] = $check;
       header("Location: login.php");
       return;
+      error_log("Login fail ".$_POST['who']." $check");
     }
-    if($row !== false){
-        $_SESSION['name'] = $_POST['who'];
-        $_SESSION['user_id'] = $row["user_id"];
-        header("Location: index.php");
-        error_log("Login success ".$_POST['who']);
-      }else{
-        $_SESSION['error'] = "Incorrect password";
-        header("Location: login.php");
-        return;
-        error_log("Login fail ".$_POST['who']." $check");
-      }
+
+    $_SESSION['name'] = $_POST['who'];
+    $_SESSION['user_id'] = $row["user_id"];
+    header("Location: index.php");
+    error_log("Login success ".$_POST['who']);
+      
     // }
   
 }
@@ -54,10 +58,7 @@ if(isset($_POST['who']) && isset($_POST['pass'])){
 <div class="container">
 <h1>Please Log In</h1>
 <?php
-if ( isset($_SESSION['error']) ) {
-  echo('<p style="color: red;">'.htmlentities($_SESSION['error'])."</p>\n");
-  unset($_SESSION['error']);
-}
+flashMessage();
 ?>
 <form method="POST">
 <label for="nam">User Name</label>

@@ -1,5 +1,6 @@
 <?php
 include_once "pdo.php";
+include_once "function.php";
 session_start();
 
 ?>
@@ -21,16 +22,9 @@ $count = $stmt->fetchColumn();
 
 if(isset($_SESSION['name'])){
   echo '<p><a href="./logout.php">Logout</a></p>';
-  if(isset($_SESSION['success'])){
-    echo '<p style="color:green;">'.$_SESSION['success'].'</p>';
-    unset($_SESSION['success']);
-  }
-
-  if(isset($_SESSION['error'])){
-    echo '<p stye="color:red;">'.$_SESSION['error'].'</p>';
-    unset($_SESSION['error']);
-  }
   
+  flashMessage();
+
   if($count>0){
     echo "<br><table> <tr><td>Name</td><td>Headline</td><td>Action</td></tr>";
   
