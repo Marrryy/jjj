@@ -53,6 +53,25 @@ if($count["COUNT(*)"] >0){
   echo "</p>";
 }
 
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM education WHERE profile_id=:aid");
+$stmt->execute(array(':aid'=> $_GET['profile_id']));
+$count = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+if($count["COUNT(*)"] >0){
+  echo "<p>Education";
+  echo "<ul>";
+  $stmt = $pdo->prepare("SELECT e.year as yearS, i.name as nameS FROM Education AS e INNER JOIN Institution AS i ON e.institution_id = i.institution_id WHERE profile_id=:aid");
+  $stmt->execute(array(':aid'=> $_GET['profile_id']));
+  while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+    echo '<li> '.htmlentities($row["yearS"]).' : '.htmlentities($row["nameS"]).'</li>';
+  }
+  echo "</ul>";
+  echo "</p>";
+}
+
+
 ?>
 <br>
 <a href="./index.php">Done</a>

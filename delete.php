@@ -22,6 +22,7 @@ if($row === false){
 
 if(isset($_POST['delete'])&& isset($_POST['profile_id'])){
     deleteProfile($pdo);
+    deleteEducation($pdo);
     $_SESSION['success']="Record deleted";
     header('Location: index.php');
     return;

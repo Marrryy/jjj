@@ -58,11 +58,39 @@ function validatePosition(){
     return false;
 }
 
+function validateEducation(){
+    for($i=1; $i<=9;$i++){
+        if(!isset($_POST["edu_school".$i]) && !isset($_POST["edu_year".$i]) )continue;
+
+        $edu_school = $_POST["edu_school".$i]; 
+        $edu_year = $_POST["edu_year".$i];
+
+        if(strlen($edu_school) === 0 || $edu_year<0){
+            return "All fields are required";
+        }
+        if(!is_numeric($edu_year)){
+            return "Year must be numeric";
+        }
+    }
+    return false;
+}
+
 function getProfile($pdo){
     $stmt = $pdo->prepare("SELECT * FROM profile WHERE profile_id=:aid");
     $stmt->execute(array(':aid'=> $_GET['profile_id']));
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     return $row;
+}
+
+function getInstitution($pdo, $edu_school){
+    $stmt = $pdo->prepare("SELECT institution_id FROM Institution WHERE name=:name");
+    $stmt->execute(array(':name'=> $edu_school));
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if($row['institution_id'] === false ||$row['institution_id'] === null  ){
+        return false;
+    }
+    return $row['institution_id'];
 }
 
 function insertProfile($pdo){
@@ -96,6 +124,30 @@ function insertPosition($pdo, $profile_id,$rank,$year,$desc){
 
 }
 
+function insertInstitution($pdo, $name){
+    $stmt = $pdo->prepare('INSERT INTO institution 
+    (name) VALUES (:name)');
+
+    $stmt->execute(array(':name' => $name));
+
+    $institution_id = $pdo->lastInsertId();
+    return $institution_id;
+}
+
+function insertEducation($pdo, $profile_id,$institution_id ,$rank,$year){
+    $stmt = $pdo->prepare('INSERT INTO education 
+    (profile_id, institution_id,rank, year ) 
+    VALUES ( :pid,  :institution_id, :rank, :year)');
+
+    $stmt->execute(array(
+      ':pid' => $profile_id,
+      ':institution_id' => $institution_id,
+      ':rank' => $rank,
+      ':year' => $year
+      )
+    );
+
+}
 
 function updateProfile($pdo){
     $stmt = $pdo->prepare('UPDATE profile SET first_name=:fn,
@@ -121,5 +173,9 @@ function deletePosition($pdo){
     $stmt->execute(array( ':pid' => $_GET['profile_id']));
 }
 
+function deleteEducation($pdo){
+    $stmt = $pdo->prepare('DELETE FROM Education WHERE profile_id=:pid');
+    $stmt->execute(array( ':pid' => $_GET['profile_id']));
+}
 
 ?>
